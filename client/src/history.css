@@ -1,0 +1,486 @@
+:root {
+    --primary: #6C63FF;
+    --primary-gradient: linear-gradient(135deg, #6C63FF 0%, #4A43C9 100%);
+    --secondary: #2C2C54;
+    --accent: #36D6E7;
+    --accent-gradient: linear-gradient(135deg, #36D6E7 0%, #2AA9B8 100%);
+    --success: #2ED573;
+    --warning: #FF9F43;
+    --danger: #FF6B6B;
+    --dark: #1E1E2C;
+    --light: #F8F9FC;
+    --gray: #8A8A9E;
+    --card-bg: #FFFFFF;
+    --sidebar-width: 85px;
+    --expanded-width: 260px;
+    --border-radius: 16px;
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --card-padding: 24px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+    color: var(--secondary);
+    line-height: 1.6;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Сайдбар компактный */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--dark);
+    color: white;
+    position: fixed;
+    height: 100vh;
+    transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon {
+    font-size: 28px;
+    color: var(--accent);
+}
+
+.sidebar-menu {
+    padding: 20px 0;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 5px;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 20px 25px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.sidebar-menu i {
+    margin-right: 15px;
+    font-size: 1.3rem;
+    min-width: 25px;
+    text-align: center;
+}
+
+.menu-text {
+    display: none;
+}
+
+.sidebar:hover .menu-text {
+    display: inline-block;
+}
+
+.reset-btn {
+    transform: translate(0%,-625%);
+    margin-top: -1000%;
+    margin-left: -0.5%;
+    padding: 5px 10px;
+    display: flex;
+    position: relative;
+    border-radius: 12px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    margin-top: -25px;
+    cursor: pointer;
+}
+
+.reset-btn:hover .glow {
+    left: 100%;
+}
+
+.reset-btn:hover {
+    background: rgba(18, 9, 72, 0.207);
+    text-shadow: 0 0 5px var(--primary);
+}
+
+/* Основной контент */
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    padding: 30px;
+    transition: margin-left 0.3s ease;
+}
+
+/* Специальные стили для предотвращения увеличения графиков */
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin-bottom: 20px;
+    /* Убираем transition для контейнеров графиков */
+}
+
+.chart-wrapper canvas {
+    display: block;
+    /* Отключаем любые transition для canvas */
+    transition: none !important;
+}
+
+/* Отключаем hover-эффекты для контейнеров с графиками */
+.chart-container > div:hover,
+.chart-box:hover .chart-canvas,
+.chart-wrapper:hover canvas {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Уточняем hover-эффекты только для нужных элементов */
+.header-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(108, 99, 255, 0.2);
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chart-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Убираем transition для всех canvas элементов */
+canvas {
+    transition: none !important;
+    transform: none !important;
+}
+
+/* Отключаем любые анимации для графиков при hover */
+.chart-canvas:hover,
+.chart-wrapper:hover,
+#charts-container > div:hover {
+    transform: none !important;
+    transition: none !important;
+}
+
+.tablo {
+    background-color: var(--secondary);
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-info img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-light);
+}
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px 30px;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    background: linear-gradient(135deg, var(--card-bg) 0%, #FDFDFE 100%);
+}
+
+.header-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.header-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    background: var(--light);
+    color: var(--secondary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(108, 99, 255, 0.2);
+}
+
+/* Контейнер для переключения периодов */
+.period-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 20px 30px;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    background: linear-gradient(135deg, var(--card-bg) 0%, #FDFDFE 100%);
+}
+
+.period-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--secondary);
+}
+
+.period-switcher {
+    display: flex;
+    border-radius: 12px;
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 130px;
+}
+
+.combo-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 15px;
+    color: #2c3e50;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    transition: var(--transition);
+    font-weight: 600;
+}
+
+.combo-btn-left {
+    border-radius: 12px 0 0 12px;
+    width: 65px;
+}
+
+.combo-btn-right {
+    border-radius: 0 12px 12px 0;
+    border-left: 1px solid #ecf0f1;
+    width: 65px;
+}
+
+.activation {
+    background-color: #20202d;
+    color: white;
+    box-shadow: 
+        0 0 10px rgba(56, 50, 58, 0.5),
+        inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.combo-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(52, 152, 219, 0.1) 0%,
+        rgba(41, 128, 185, 0.05) 100%);
+    color: #3498db;
+}
+
+.combo-btn:active {
+    transform: translateY(1px);
+    background: linear-gradient(135deg, 
+        rgba(52, 152, 219, 0.15) 0%,
+        rgba(41, 128, 185, 0.1) 100%);
+}
+
+/* Контентная область */
+.charts-content {
+    width: 100%;
+}
+
+.content-ar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.welcome-message {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+}
+
+.welcome-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: var(--primary);
+    opacity: 0.7;
+}
+
+.welcome-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--secondary);
+}
+
+.welcome-text {
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Контейнеры для графиков */
+.chart-wrapper {
+    width: 100%;
+    height: 300px;
+    margin-bottom: 30px;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    background-color: var(--card-bg);
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+    .charts-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        z-index: 1000;
+    }
+    
+    .sidebar:hover {
+        width: var(--expanded-width);
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .period-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .header-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .menu-toggle {
+        display: block;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1100;
+        background: var(--primary);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .sidebar {
+        height: var(--sidebar-width);
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        padding-top: 20px;
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        height: 70px;
+    }
+    
+    .main-content {
+        margin-bottom: 70px;
+        margin-left: 0;
+    }
+    
+    .period-switcher {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .combo-btn {
+        width: 100%;
+    }
+    
+    .combo-btn-left {
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .combo-btn-right {
+        border-radius: 0 0 12px 12px;
+        border-left: none;
+        border-top: 1px solid #ecf0f1;
+    }
+}

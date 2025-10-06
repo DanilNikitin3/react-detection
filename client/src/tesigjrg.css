@@ -1,0 +1,364 @@
+:root {
+  --primary: #6C63FF;
+  --primary-gradient: linear-gradient(135deg, #6C63FF 0%, #4A43C9 100%);
+  --secondary: #2C2C54;
+  --accent: #36D6E7;
+  --accent-gradient: linear-gradient(135deg, #36D6E7 0%, #2AA9B8 100%);
+  --success: #2ED573;
+  --warning: #FF9F43;
+  --danger: #FF6B6B;
+  --dark: #1E1E2C;
+  --light: #F8F9FC;
+  --gray: #8A8A9E;
+  --card-bg: #FFFFFF;
+  --sidebar-width: 80px; /* Сохранен исходный размер */
+  --expanded-width: 240px;
+  --border-radius: 16px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --card-padding: 24px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  color: var(--secondary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Сайдбар компактный */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--dark);
+  color: white;
+  position: fixed;
+  height: 100vh;
+  transition: var(--transition);
+  z-index: 1000;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 20px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-icon {
+  font-size: 28px;
+  color: var(--accent);
+}
+
+.sidebar-menu {
+  padding: 20px 0;
+}
+
+.sidebar-menu ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar-menu li {
+  margin-bottom: 5px;
+}
+
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  padding: 20px 25px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: var(--transition);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.sidebar-menu i {
+  margin-right: 15px;
+  font-size: 1.3rem;
+  min-width: 25px;
+  text-align: center;
+}
+
+.menu-text {
+  display: none;
+}
+
+.sidebar:hover .menu-text {
+  display: inline-block;
+}
+
+/* Основной контент */
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  padding: 30px;
+  transition: var(--transition);
+}
+
+.tablo {
+  background-color: var(--secondary);
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding: 20px 30px;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  background: linear-gradient(135deg, var(--card-bg) 0%, #FDFDFE 100%);
+}
+
+.header-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Контейнер для переключения периодов */
+.period-container {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 28px;
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, var(--card-bg) 0%, #FDFDFE 100%);
+}
+
+.period-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.period-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--secondary);
+}
+
+.period-switcher {
+  display: flex;
+  background: var(--light);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.period-btn {
+  padding: 12px 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+  color: var(--gray);
+  position: relative;
+  z-index: 1;
+}
+
+.period-btn.active {
+  color: white;
+}
+
+.slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 50%;
+  background: var(--primary-gradient);
+  border-radius: 12px;
+  transition: var(--transition);
+}
+
+.slider.month-active {
+  left: 50%;
+}
+
+/* Контентная область */
+.content-area {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+
+.welcome-message {
+  text-align: center;
+  max-width: 500px;
+  padding: 40px;
+}
+
+.welcome-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  color: var(--primary);
+  opacity: 0.7;
+}
+
+.welcome-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: var(--secondary);
+}
+
+.welcome-text {
+  color: var(--gray);
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+/* Контейнеры для графиков */
+.charts-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  animation: fadeIn 0.5s ease;
+  width: 100%;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chart-box {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 25px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  background: linear-gradient(135deg, var(--card-bg) 0%, #FDFDFE 100%);
+}
+
+.chart-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chart-title i {
+  color: var(--primary);
+}
+
+.chart-canvas {
+  width: 100%;
+  height: 300px;
+}
+
+/* Адаптивность */
+@media (max-width: 992px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 0;
+    z-index: 1000;
+  }
+  
+  .sidebar:hover {
+    width: var(--expanded-width);
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding: 20px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .period-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+  
+  .period-switcher {
+    width: 100%;
+  }
+  
+  .menu-toggle {
+    display: block;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1100;
+    background: var(--primary);
+    color: white;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    font-size: 1.2rem;
+  }
+}
