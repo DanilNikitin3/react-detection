@@ -1,8 +1,5 @@
 server/node_modules
 node_modules/
 client/node_modules
-client/build
 client/package-lock.json
-public
 server/package-lock.json
-

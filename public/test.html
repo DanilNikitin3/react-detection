@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnergyMonitor | Анализ напряжения</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --primary-light: #837dff;
+            --secondary: #2C2C54;
+            --accent: #36D6E7;
+            --success: #2ED573;
+            --warning: #FF9F43;
+            --danger: #FF6B6B;
+            --dark: #1E1E2C;
+            --light: #F8F9FC;
+            --gray: #8A8A9E;
+            --sidebar-width: 80px;
+            --expanded-width: 240px;
+            --header-height: 70px;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --card-padding: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--secondary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Сайдбар компактный */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+
+        .sidebar-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            color: var(--accent);
+        }
+
+        .sidebar-menu {
+            padding: 20px 0;
+        }
+
+        .sidebar-menu ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 20px 25px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        .sidebar-menu i {
+            margin-right: 15px;
+            font-size: 1.3rem;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .menu-text {
+            display: none;
+        }
+
+        .sidebar:hover .menu-text {
+            display: inline-block;
+        }
+
+        /* Основной контент */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 15px 25px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-weight: 700;
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info img {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+        }
+
+        .toggle-knob {
+            position: absolute;
+            width: 65px;
+            height: 65px;
+            background: white;
+            border-radius: 50%;
+            top: 7.5px;
+            left: 8px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #06c000;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            margin-left: 10px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #f1f2f6;
+            font-size: 0.95rem;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Карточки с показателями */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: var(--card-padding);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .metric-title {
+            font-size: 0.85rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .metric-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .metric-value {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--secondary);
+        }
+
+        .metric-change {
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .up {
+            color: var(--success);
+        }
+
+        .down {
+            color: var(--danger);
+        }
+
+        /* График */
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chart-actions button {
+            background: var(--light);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .chart-actions button:hover, .chart-actions button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chart {
+            width: 100%;
+            height: 280px;
+            background: #f9fafc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-placeholder {
+            width: 90%;
+            height: 70%;
+            background: linear-gradient(90deg, #f0f0f0 0px, #f8f8f8 40px, #f0f0f0 80px);
+            background-size: 250px;
+            border-radius: 8px;
+            animation: shine 1.6s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { background-position: -100px; }
+            100% { background-position: 200px; }
+        }
+
+        /* Таблица аномалий */
+        .anomalies-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .tablo {
+            background-color: var(--secondary);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .export-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .export-btn:hover {
+            background: var(--primary-light);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f1f2f6;
+            font-size: 0.9rem;
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover {
+            background: #fafbff;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .critical {
+            background: rgba(255, 107, 107, 0.1);
+            color: var(--danger);
+        }
+
+        .warning {
+            background: rgba(255, 159, 67, 0.1);
+            color: var(--warning);
+        }
+
+        .normal {
+            background: rgba(46, 213, 115, 0.1);
+            color: var(--success);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 992px) {
+            .metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .metrics {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .user-info {
+                margin-top: 0;
+            }
+            
+            .sidebar {
+                width: 0;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1100;
+                background: var(--primary);
+                color: white;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Уведомления */
+        .notification-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--danger);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+            </div>
+            <div class="sidebar-menu">
+                <ul>
+                    <li><a href="#" class="active">
+                        <i class="fas fa-home"></i> 
+                    </a></li>
+                    <li><a href="#">
+                        <i class="fas fa-bolt"></i> 
+                    </a></li>
+                    <li><a href="#">
+                        <i class="fas fa-chart-line"></i> 
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="header">
+                <h1>Мониторинг аномалий напряжения</h1>
+                <div class="user-info">
+                    <div class = 'tablo'>
+                        <img src="https://ui-avatars.com/api/?name=ON&background=06c000&color=fff" alt="User">
+                        <div class="user-details">
+                            <div class="user-name">Bluetooth</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-title">ТЕКУЩЕЕ НАПРЯЖЕНИЕ</div>
+                        <div class="metric-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">229.4 В</div>
+                    <div class="metric-change up">
+                        <i class="fas fa-arrow-up"></i> 2.3% с прошлого часа
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-title">АНОМАЛИЙ СЕГОДНЯ</div>
+                        <div class="metric-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">14</div>
+                    <div class="metric-change down">
+                        <i class="fas fa-arrow-down"></i> 5.7% с вчерашнего дня
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-title">СРЕДНЕЕ ЗНАЧЕНИЕ</div>
+                        <div class="metric-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">231.2 В</div>
+                    <div class="metric-change up">
+                        <i class="fas fa-arrow-up"></i> 1.1% с прошлой недели
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <div class="metric-title">СТАБИЛЬНОСТЬ СЕТИ</div>
+                        <div class="metric-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                    </div>
+                    <div class="metric-value">98.7%</div>
+                    <div class="metric-change up">
+                        <i class="fas fa-arrow-up"></i> 0.3% с прошлого месяца
+                    </div>
+                </div>
+            </div>
+
+            <div class="anomalies-container">
+                <div class="table-header">
+                    <div class="chart-title">Последние аномалии</div>
+                    <button class="export-btn">
+                        <i class="fas fa-download"></i> Экспорт отчетов
+                    </button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Время</th>
+                            <th>Тип аномалии</th>
+                            <th>Значение</th>
+                            <th>Длительность</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>12:45:23</td>
+                            <td>Скачок напряжения</td>
+                            <td>287 В</td>
+                            <td>120 мс</td>
+                            <td><span class="status critical">Критическая</span></td>
+                        </tr>
+                        <tr>
+                            <td>12:30:11</td>
+                            <td>Просадка напряжения</td>
+                            <td>195 В</td>
+                            <td>450 мс</td>
+                            <td><span class="status warning">Предупреждение</span></td>
+                        </tr>
+                        <tr>
+                            <td>11:15:47</td>
+                            <td>Колебание</td>
+                            <td>218 В</td>
+                            <td>1.2 с</td>
+                            <td><span class="status normal">Норма</span></td>
+                        </tr>
+                        <tr>
+                            <td>10:22:56</td>
+                            <td>Скачок напряжения</td>
+                            <td>276 В</td>
+                            <td>80 мс</td>
+                            <td><span class="status warning">Предупреждение</span></td>
+                        </tr>
+                        <tr>
+                            <td>09:45:12</td>
+                            <td>Просадка напряжения</td>
+                            <td>187 В</td>
+                            <td>620 мс</td>
+                            <td><span class="status critical">Критическая</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработчики для кнопок переключения временного диапазона
+            const timeButtons = document.querySelectorAll('.chart-actions button');
+            timeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    timeButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Имитация живого обновления данных напряжения
+            setInterval(() => {
+                const voltageValue = document.querySelector('.metric-card:first-child .metric-value');
+                const randomChange = (Math.random() * 0.8 + 228.5).toFixed(1);
+                voltageValue.textContent = randomChange + ' В';
+                
+                // Обновляем иконку тренда
+                const trendIcon = document.querySelector('.metric-card:first-child .metric-change');
+                const isPositive = Math.random() > 0.5;
+                
+                if (isPositive) {
+                    trendIcon.innerHTML = '<i class="fas fa-arrow-up"></i> ' + (Math.random() * 0.5 + 2.0).toFixed(1) + '% с прошлого часа';
+                    trendIcon.className = 'metric-change up';
+                } else {
+                    trendIcon.innerHTML = '<i class="fas fa-arrow-down"></i> ' + (Math.random() * 0.3 + 0.5).toFixed(1) + '% с прошлого часа';
+                    trendIcon.className = 'metric-change down';
+                }
+            }, 5000);
+            
+            // Анимация появления элементов при загрузке
+            const cards = document.querySelectorAll('.metric-card');
+            cards.forEach((card, index) => {
+                card.style.animation = `fadeIn 0.5s ease ${index * 0.1}s forwards`;
+                card.style.opacity = 0;
+            });
+            
+            // Добавляем стили для анимации
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeIn {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html> -->
+
